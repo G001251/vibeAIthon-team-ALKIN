@@ -1,4 +1,4 @@
-import { Home, Target, Users, DollarSign, Settings, HelpCircle } from "lucide-react";
+import { Home, Target, Users, DollarSign, BarChart3, Mail, Settings, HelpCircle } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -17,6 +17,8 @@ const menuItems = [
   { title: "HireSmart", url: "/hire-smart", icon: Target },
   { title: "AutoMatch", url: "/auto-match", icon: Users },
   { title: "Salary Analysis", url: "/salary-analysis", icon: DollarSign },
+  { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Messages", url: "/messages", icon: Mail },
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Help", url: "/help", icon: HelpCircle },
 ];

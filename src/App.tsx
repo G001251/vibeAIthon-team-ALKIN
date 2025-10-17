@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import HireSmart from "./pages/HireSmart";
 import AutoMatch from "./pages/AutoMatch";
 import SalaryAnalysis from "./pages/SalaryAnalysis";
+import Analytics from "./pages/Analytics";
+import Messages from "./pages/Messages";
 import Settings from "./pages/Settings";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
@@ -40,6 +42,8 @@ const App = () => (
             <Route path="hire-smart" element={<HireSmart />} />
             <Route path="auto-match" element={<AutoMatch />} />
             <Route path="salary-analysis" element={<SalaryAnalysis />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="messages" element={<Messages />} />
             <Route path="settings" element={<Settings />} />
             <Route path="help" element={<Help />} />
           </Route>

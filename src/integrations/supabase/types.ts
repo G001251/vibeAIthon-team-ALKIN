@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      ats_config: {
+        Row: {
+          created_at: string | null
+          default_threshold: number | null
+          id: string
+          skills_keywords: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          default_threshold?: number | null
+          id?: string
+          skills_keywords?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          default_threshold?: number | null
+          id?: string
+          skills_keywords?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       candidates: {
         Row: {
           applied_date: string | null
@@ -71,6 +95,33 @@ export type Database = {
           resume_url?: string | null
           skills?: string[] | null
           status?: Database["public"]["Enums"]["candidate_status"] | null
+        }
+        Relationships: []
+      }
+      company_settings: {
+        Row: {
+          company_name: string
+          created_at: string | null
+          id: string
+          locations: string[] | null
+          logo_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_name?: string
+          created_at?: string | null
+          id?: string
+          locations?: string[] | null
+          logo_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_name?: string
+          created_at?: string | null
+          id?: string
+          locations?: string[] | null
+          logo_url?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -154,6 +205,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -314,6 +395,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -322,6 +424,13 @@ export type Database = {
       get_user_role: {
         Args: { user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
