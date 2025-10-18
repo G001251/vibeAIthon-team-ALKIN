@@ -46,16 +46,25 @@ export type Database = {
           current_ctc: number | null
           domain: string | null
           education: string | null
+          education_score: number | null
           email: string
           expected_ctc: number | null
+          experience_score: number | null
           experience_years: number | null
+          graduation_year: number | null
           id: string
+          institution: string | null
           location: string | null
           name: string
+          overall_score: number | null
           phone: string | null
+          positions: Json | null
+          project_domains: string[] | null
+          projects_score: number | null
           resume_text: string | null
           resume_url: string | null
           skills: string[] | null
+          skills_score: number | null
           status: Database["public"]["Enums"]["candidate_status"] | null
         }
         Insert: {
@@ -65,16 +74,25 @@ export type Database = {
           current_ctc?: number | null
           domain?: string | null
           education?: string | null
+          education_score?: number | null
           email: string
           expected_ctc?: number | null
+          experience_score?: number | null
           experience_years?: number | null
+          graduation_year?: number | null
           id?: string
+          institution?: string | null
           location?: string | null
           name: string
+          overall_score?: number | null
           phone?: string | null
+          positions?: Json | null
+          project_domains?: string[] | null
+          projects_score?: number | null
           resume_text?: string | null
           resume_url?: string | null
           skills?: string[] | null
+          skills_score?: number | null
           status?: Database["public"]["Enums"]["candidate_status"] | null
         }
         Update: {
@@ -84,16 +102,25 @@ export type Database = {
           current_ctc?: number | null
           domain?: string | null
           education?: string | null
+          education_score?: number | null
           email?: string
           expected_ctc?: number | null
+          experience_score?: number | null
           experience_years?: number | null
+          graduation_year?: number | null
           id?: string
+          institution?: string | null
           location?: string | null
           name?: string
+          overall_score?: number | null
           phone?: string | null
+          positions?: Json | null
+          project_domains?: string[] | null
+          projects_score?: number | null
           resume_text?: string | null
           resume_url?: string | null
           skills?: string[] | null
+          skills_score?: number | null
           status?: Database["public"]["Enums"]["candidate_status"] | null
         }
         Relationships: []

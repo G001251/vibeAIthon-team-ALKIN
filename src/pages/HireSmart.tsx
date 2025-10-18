@@ -1,36 +1,157 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Filter } from "lucide-react";
+import { Upload, Filter, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ResumeUpload } from "@/components/ResumeUpload";
+import { CandidateFilterBar, FilterState } from "@/components/CandidateFilterBar";
+import { EnhancedCandidateCard } from "@/components/EnhancedCandidateCard";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const HireSmart = () => {
-  const [atsThreshold, setAtsThreshold] = useState(70);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<string>("overall_score");
+  const [filters, setFilters] = useState<FilterState>({
+    searchQuery: "",
+    skills: [],
+    experienceMin: 0,
+    experienceMax: 20,
+    domains: [],
+    atsScoreMin: 0,
+    departments: [],
+    overallScoreMin: 0,
+  });
 
-  const { data: candidates, isLoading } = useQuery({
-    queryKey: ["candidates", atsThreshold],
+  const { data: candidates, isLoading, refetch } = useQuery({
+    queryKey: ["candidates"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("candidates")
         .select("*")
-        .gte("ats_score", atsThreshold)
-        .order("ats_score", { ascending: false });
+        .order("overall_score", { ascending: false });
 
       if (error) throw error;
       return data;
     },
   });
 
-  const getScoreBadgeColor = (score: number) => {
-    if (score >= 80) return "bg-success text-success-foreground";
-    if (score >= 60) return "bg-warning text-warning-foreground";
-    return "bg-destructive text-destructive-foreground";
+  // Filter and sort candidates
+  const filteredCandidates = useMemo(() => {
+    if (!candidates) return [];
+
+    let filtered = candidates.filter((candidate) => {
+      // Search query
+      if (filters.searchQuery) {
+        const query = filters.searchQuery.toLowerCase();
+        const searchableText = `
+          ${candidate.name} 
+          ${candidate.email} 
+          ${candidate.skills?.join(" ")} 
+          ${candidate.domain}
+          ${candidate.education}
+          ${candidate.location}
+        `.toLowerCase();
+        
+        if (!searchableText.includes(query)) return false;
+      }
+
+      // Skills filter
+      if (filters.skills.length > 0) {
+        const hasSkills = filters.skills.some((skill) =>
+          candidate.skills?.some((cs) => cs.toLowerCase().includes(skill.toLowerCase()))
+        );
+        if (!hasSkills) return false;
+      }
+
+      // Experience range
+      if (
+        candidate.experience_years < filters.experienceMin ||
+        candidate.experience_years > filters.experienceMax
+      ) {
+        return false;
+      }
+
+      // Domains filter
+      if (filters.domains.length > 0) {
+        const hasDomain = filters.domains.some((domain) =>
+          candidate.project_domains?.some((pd) => pd.toLowerCase().includes(domain.toLowerCase())) ||
+          candidate.domain?.toLowerCase().includes(domain.toLowerCase())
+        );
+        if (!hasDomain) return false;
+      }
+
+      // Department filter
+      if (filters.departments.length > 0) {
+        const hasDepartment = filters.departments.some((dept) =>
+          candidate.education?.toLowerCase().includes(dept.toLowerCase())
+        );
+        if (!hasDepartment) return false;
+      }
+
+      // Score filters
+      if (candidate.ats_score < filters.atsScoreMin) return false;
+      if ((candidate.overall_score || candidate.ats_score) < filters.overallScoreMin) {
+        return false;
+      }
+
+      return true;
+    });
+
+    // Sort
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "overall_score":
+          return (b.overall_score || b.ats_score) - (a.overall_score || a.ats_score);
+        case "ats_score":
+          return b.ats_score - a.ats_score;
+        case "experience_years":
+          return b.experience_years - a.experience_years;
+        case "name":
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }, [candidates, filters, sortBy]);
+
+  const handleShortlist = async (candidateId: string) => {
+    const { error } = await supabase
+      .from("candidates")
+      .update({ status: "shortlisted" })
+      .eq("id", candidateId);
+
+    if (error) {
+      toast.error("Failed to shortlist candidate");
+    } else {
+      toast.success("Candidate shortlisted successfully");
+      refetch();
+    }
+  };
+
+  const handleReject = async (candidateId: string) => {
+    const { error } = await supabase
+      .from("candidates")
+      .update({ status: "rejected" })
+      .eq("id", candidateId);
+
+    if (error) {
+      toast.error("Failed to reject candidate");
+    } else {
+      toast.success("Candidate rejected");
+      refetch();
+    }
   };
 
   return (
@@ -39,7 +160,7 @@ const HireSmart = () => {
         <div>
           <h1 className="text-3xl font-bold">HireSmart</h1>
           <p className="text-muted-foreground">
-            Intelligent Resume Screening with ATS Scoring
+            Multi-Criteria Candidate Shortlisting with Advanced Scoring
           </p>
         </div>
         <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
@@ -56,6 +177,7 @@ const HireSmart = () => {
             <ResumeUpload
               onUpload={(files) => {
                 setIsUploadOpen(false);
+                refetch();
               }}
             />
           </DialogContent>
@@ -69,6 +191,9 @@ const HireSmart = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{candidates?.length || 0}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {filteredCandidates.length} matching filters
+            </p>
           </CardContent>
         </Card>
         <Card className="shadow-card">
@@ -93,74 +218,72 @@ const HireSmart = () => {
         </Card>
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Hired</CardTitle>
+            <CardTitle className="text-sm font-medium">Avg Score</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {candidates?.filter((c) => c.status === "hired").length || 0}
+            <div className="text-2xl font-bold flex items-center gap-2">
+              {candidates && candidates.length > 0
+                ? Math.round(
+                    candidates.reduce(
+                      (acc, c) => acc + (c.overall_score || c.ats_score),
+                      0
+                    ) / candidates.length
+                  )
+                : 0}
+              <TrendingUp className="h-4 w-4 text-success" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="shadow-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            ATS Score Threshold: {atsThreshold}%
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <input
-            type="range"
-            min="60"
-            max="90"
-            value={atsThreshold}
-            onChange={(e) => setAtsThreshold(Number(e.target.value))}
-            className="w-full"
-          />
-        </CardContent>
-      </Card>
+      {/* Advanced Filter Bar */}
+      <CandidateFilterBar onFilterChange={setFilters} />
 
+      {/* Results Header */}
+      <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+        <div className="text-sm">
+          Found <span className="font-bold">{filteredCandidates.length}</span> candidates
+          {filters.searchQuery && ` matching "${filters.searchQuery}"`}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Sort by:</span>
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="overall_score">Overall Score</SelectItem>
+              <SelectItem value="ats_score">ATS Score</SelectItem>
+              <SelectItem value="experience_years">Experience</SelectItem>
+              <SelectItem value="name">Name</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Candidate Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {isLoading ? (
-          <p>Loading candidates...</p>
-        ) : candidates && candidates.length > 0 ? (
-          candidates.map((candidate) => (
-            <Card key={candidate.id} className="shadow-card">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">{candidate.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{candidate.email}</p>
-                  </div>
-                  <Badge className={getScoreBadgeColor(candidate.ats_score)}>
-                    {candidate.ats_score}%
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex flex-wrap gap-1">
-                  {candidate.skills?.slice(0, 5).map((skill, idx) => (
-                    <Badge key={idx} variant="secondary" className="text-xs">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  <p>{candidate.experience_years} years experience</p>
-                  <p>Expected: ₹{candidate.expected_ctc}L</p>
-                  <p>{candidate.location}</p>
-                </div>
-                <Badge variant="outline">{candidate.status}</Badge>
-              </CardContent>
-            </Card>
+          <div className="col-span-full text-center py-12">
+            <p>Loading candidates...</p>
+          </div>
+        ) : filteredCandidates.length > 0 ? (
+          filteredCandidates.map((candidate) => (
+            <EnhancedCandidateCard
+              key={candidate.id}
+              candidate={candidate}
+              onShortlist={handleShortlist}
+              onReject={handleReject}
+              onViewResume={(id) => toast.info("Resume viewer coming soon")}
+            />
           ))
         ) : (
           <Card className="col-span-full shadow-card">
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">
-                No candidates found. Upload resumes to get started.
+                {candidates && candidates.length > 0
+                  ? "No candidates match your filters. Try adjusting your search criteria."
+                  : "No candidates found. Upload resumes to get started."}
               </p>
             </CardContent>
           </Card>

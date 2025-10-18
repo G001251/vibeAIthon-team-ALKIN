@@ -47,26 +47,104 @@ export function ResumeUpload({ onUpload }: ResumeUploadProps) {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const parseResumeData = (fileName: string, fileSize: number) => {
-    // Mock parsing - in production, use a document parsing library
-    const skills = ["React", "TypeScript", "Node.js", "Python", "SQL"];
-    const domains = ["Software Engineering", "Web Development", "Backend"];
-    const locations = ["Bangalore", "Chennai", "Hyderabad", "Mumbai", "Pune"];
+  const calculateScores = (data: any) => {
+    // Multi-criteria scoring algorithm
+    const skillsArray = data.skills || [];
+    const projectDomains = data.project_domains || [];
+    const experienceYears = data.experience_years || 0;
+    
+    // ATS Score (already calculated, 0-100)
+    const atsScore = data.ats_score;
+    
+    // Skills Score (0-100): Based on number and relevance of skills
+    const skillsScore = Math.min(100, skillsArray.length * 10 + Math.random() * 20);
+    
+    // Projects Score (0-100): Based on project domains and complexity
+    const projectsScore = Math.min(100, projectDomains.length * 15 + Math.random() * 25);
+    
+    // Experience Score (0-100): Weighted by years
+    // 0-2 years: 40-60, 3-5 years: 60-80, 5+ years: 80-100
+    let experienceScore = 0;
+    if (experienceYears <= 2) {
+      experienceScore = 40 + (experienceYears / 2) * 20;
+    } else if (experienceYears <= 5) {
+      experienceScore = 60 + ((experienceYears - 2) / 3) * 20;
+    } else {
+      experienceScore = Math.min(100, 80 + ((experienceYears - 5) / 10) * 20);
+    }
+    
+    // Education Score (0-100): Based on education relevance
+    const educationScore = Math.floor(Math.random() * 30) + 70;
+    
+    // Overall Score: Weighted average
+    // ATS(30%) + Skills(25%) + Projects(20%) + Experience(15%) + Education(10%)
+    const overallScore = Math.round(
+      atsScore * 0.30 +
+      skillsScore * 0.25 +
+      projectsScore * 0.20 +
+      experienceScore * 0.15 +
+      educationScore * 0.10
+    );
     
     return {
+      ats_score: atsScore,
+      skills_score: skillsScore,
+      projects_score: projectsScore,
+      experience_score: experienceScore,
+      education_score: educationScore,
+      overall_score: overallScore,
+    };
+  };
+
+  const parseResumeData = (fileName: string, fileSize: number) => {
+    // Mock parsing - in production, use a document parsing library
+    const allSkills = [
+      "React", "TypeScript", "Node.js", "Python", "SQL", "JavaScript",
+      "Java", "MongoDB", "AWS", "Docker", "Kubernetes", "Express.js",
+      "Django", "PostgreSQL", "MySQL", "GraphQL", "REST API"
+    ];
+    
+    const domains = ["Software Engineering", "Web Development", "Backend", "Full Stack"];
+    const projectDomains = [
+      "Web Development", "Mobile Development", "AI/ML", "Cloud Computing",
+      "DevOps", "E-commerce", "Finance", "Healthcare"
+    ];
+    const locations = ["Bangalore", "Chennai", "Hyderabad", "Mumbai", "Pune"];
+    const departments = [
+      "Computer Science", "Software Engineering", "Information Technology",
+      "Electronics", "Data Science"
+    ];
+    
+    const numSkills = Math.floor(Math.random() * 5) + 5;
+    const selectedSkills = allSkills.sort(() => 0.5 - Math.random()).slice(0, numSkills);
+    
+    const numDomains = Math.floor(Math.random() * 3) + 2;
+    const selectedDomains = projectDomains.sort(() => 0.5 - Math.random()).slice(0, numDomains);
+    
+    const experienceYears = Math.floor(Math.random() * 10) + 1;
+    const department = departments[Math.floor(Math.random() * departments.length)];
+    
+    const baseData = {
       name: fileName.replace(/\.(pdf|docx)$/i, "").replace(/[-_]/g, " "),
       email: `${fileName.split(".")[0].toLowerCase()}@example.com`,
       phone: `+91 ${Math.floor(Math.random() * 9000000000 + 1000000000)}`,
-      skills: skills.slice(0, Math.floor(Math.random() * 3) + 3),
-      experience_years: Math.floor(Math.random() * 10) + 1,
+      skills: selectedSkills,
+      experience_years: experienceYears,
       expected_ctc: Math.floor(Math.random() * 20) + 5,
       current_ctc: Math.floor(Math.random() * 15) + 3,
       location: locations[Math.floor(Math.random() * locations.length)],
       domain: domains[Math.floor(Math.random() * domains.length)],
-      education: "Bachelor's Degree in Computer Science",
+      education: `Bachelor's Degree in ${department}`,
       ats_score: Math.floor(Math.random() * 40) + 60,
       status: "new" as const,
+      project_domains: selectedDomains,
+      institution: "Sample University",
+      graduation_year: 2020 + Math.floor(Math.random() * 5),
     };
+    
+    const scores = calculateScores(baseData);
+    
+    return { ...baseData, ...scores };
   };
 
   const handleUpload = async () => {
