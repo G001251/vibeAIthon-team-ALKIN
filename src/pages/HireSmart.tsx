@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Upload, Filter } from "lucide-react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ResumeUpload } from "@/components/ResumeUpload";
 
 const HireSmart = () => {
   const [atsThreshold, setAtsThreshold] = useState(70);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
 
   const { data: candidates, isLoading } = useQuery({
     queryKey: ["candidates", atsThreshold],
@@ -39,10 +42,24 @@ const HireSmart = () => {
             Intelligent Resume Screening with ATS Scoring
           </p>
         </div>
-        <Button className="gap-2">
-          <Upload className="h-4 w-4" />
-          Upload Resumes
-        </Button>
+        <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Upload className="h-4 w-4" />
+              Upload Resumes
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Upload Resumes (Up to 50 files)</DialogTitle>
+            </DialogHeader>
+            <ResumeUpload
+              onUpload={(files) => {
+                setIsUploadOpen(false);
+              }}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">

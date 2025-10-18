@@ -1,5 +1,5 @@
-import { Home, Target, Users, DollarSign, BarChart3, Mail, Settings, HelpCircle } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Home, Target, Users, DollarSign, BarChart3, Mail, Settings, HelpCircle, LogOut } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -9,10 +9,13 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { supabase } from "@/integrations/supabase/client";
+import { Separator } from "@/components/ui/separator";
 
-const menuItems = [
+const mainMenuItems = [
   { title: "Dashboard", url: "/", icon: Home },
   { title: "HireSmart", url: "/hire-smart", icon: Target },
   { title: "AutoMatch", url: "/auto-match", icon: Users },
@@ -20,12 +23,21 @@ const menuItems = [
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Messages", url: "/messages", icon: Mail },
   { title: "Settings", url: "/settings", icon: Settings },
+];
+
+const footerMenuItems = [
   { title: "Help", url: "/help", icon: HelpCircle },
 ];
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -43,7 +55,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
+              {mainMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink
@@ -65,6 +77,35 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      <SidebarFooter>
+        <Separator className="my-2" />
+        <SidebarMenu>
+          {footerMenuItems.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild>
+                <NavLink
+                  to={item.url}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                      : ""
+                  }
+                >
+                  <item.icon className="h-5 w-5" />
+                  <span>{item.title}</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleLogout}>
+              <LogOut className="h-5 w-5" />
+              <span>Logout</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
