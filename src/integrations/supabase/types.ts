@@ -329,13 +329,82 @@ export type Database = {
           },
         ]
       }
+      project_matches: {
+        Row: {
+          assigned_at: string | null
+          availability_score: number | null
+          candidate_id: string
+          created_at: string | null
+          domain_score: number | null
+          education_score: number | null
+          experience_score: number | null
+          id: string
+          match_score: number
+          project_id: string
+          skills_score: number | null
+          status: string | null
+        }
+        Insert: {
+          assigned_at?: string | null
+          availability_score?: number | null
+          candidate_id: string
+          created_at?: string | null
+          domain_score?: number | null
+          education_score?: number | null
+          experience_score?: number | null
+          id?: string
+          match_score?: number
+          project_id: string
+          skills_score?: number | null
+          status?: string | null
+        }
+        Update: {
+          assigned_at?: string | null
+          availability_score?: number | null
+          candidate_id?: string
+          created_at?: string | null
+          domain_score?: number | null
+          education_score?: number | null
+          experience_score?: number | null
+          id?: string
+          match_score?: number
+          project_id?: string
+          skills_score?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_matches_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_matches_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
+          additional_notes: string | null
+          budget_range: string | null
+          client_name: string | null
           created_at: string | null
           description: string | null
+          employees_assigned: number | null
+          employees_needed: number | null
           end_date: string | null
+          experience_level: string | null
           id: string
+          location: string | null
+          priority: string | null
           progress_percentage: number | null
+          remote_type: string | null
           required_experience: number | null
           required_skills: string[] | null
           start_date: string | null
@@ -343,13 +412,23 @@ export type Database = {
           team_size: number | null
           timeline: string | null
           title: string
+          type: string | null
         }
         Insert: {
+          additional_notes?: string | null
+          budget_range?: string | null
+          client_name?: string | null
           created_at?: string | null
           description?: string | null
+          employees_assigned?: number | null
+          employees_needed?: number | null
           end_date?: string | null
+          experience_level?: string | null
           id?: string
+          location?: string | null
+          priority?: string | null
           progress_percentage?: number | null
+          remote_type?: string | null
           required_experience?: number | null
           required_skills?: string[] | null
           start_date?: string | null
@@ -357,13 +436,23 @@ export type Database = {
           team_size?: number | null
           timeline?: string | null
           title: string
+          type?: string | null
         }
         Update: {
+          additional_notes?: string | null
+          budget_range?: string | null
+          client_name?: string | null
           created_at?: string | null
           description?: string | null
+          employees_assigned?: number | null
+          employees_needed?: number | null
           end_date?: string | null
+          experience_level?: string | null
           id?: string
+          location?: string | null
+          priority?: string | null
           progress_percentage?: number | null
+          remote_type?: string | null
           required_experience?: number | null
           required_skills?: string[] | null
           start_date?: string | null
@@ -371,6 +460,7 @@ export type Database = {
           team_size?: number | null
           timeline?: string | null
           title?: string
+          type?: string | null
         }
         Relationships: []
       }
