@@ -1,0 +1,24 @@
+- Humanet HR Platform - Team "ALKIN"
+
+This repository contains the full Humanet HR Platform, built for the VibeAIthon Hackathon.
+
+- Project Overview
+Humanet is a comprehensive HR management system with three major modules:
+
+1. HR Dashboard** – Manage employees, track attendance, visualize HR analytics.
+2. HireSmart** – Intelligent recruitment platform with resume parsing, candidate filtering, and match scoring.
+3. AutoMatch & Salary Prediction** – AI-powered job matching and salary prediction for fair HR decisions.
+
+- Tech Stack
+- Frontend: React + TypeScript
+- Backend: Node.js + Express
+- Database: MongoDB Atlas
+- ML/AI: Resume parsing, job matching, salary prediction
+
+- Repository Structure
+- `00-admin/` – Team info, timeline, overview
+- `01-idea-submission/` – Problem statement, solution, pitch deck
+- `02-idea-validation/` – Feasibility, viability, mentor feedback
+- `03-prototype/` – Prototype code, wireframes, demo video
+- `04-final-project/` – Final project code, documentation, walkthrough
+- `05-vibeAIthon-day/` – Demo plan, setup instructions, booth assets
