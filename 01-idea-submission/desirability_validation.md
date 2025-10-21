@@ -3,7 +3,7 @@
 ## User Research & Validation
 To ensure our solution truly addresses HR needs, we conducted **direct consultations with HR professionals** and observed their workflows.
 
-##Primary Validation:
+## Primary Validation:
 
 Interview with MRS.Dorothy Hariprakash, HR at Cavin Infotech Pvt Ltd, Coimbatore. __(about an 2.5hrs of discussion and conclusion)
 Discussed day-to-day HR processes, challenges, and pain points.
