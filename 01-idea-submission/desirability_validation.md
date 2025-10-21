@@ -3,6 +3,12 @@
 ## User Research & Validation
 To ensure our solution truly addresses HR needs, we conducted **direct consultations with HR professionals** and observed their workflows.
 
+##Primary Validation:
+
+Interview with MRS.Dorothy Hariprakash, HR at Cavin Infotech Pvt Ltd, Coimbatore. __(about an 2.5hrs of discussion and conclusion)
+Discussed day-to-day HR processes, challenges, and pain points.
+Observed inefficiencies in employee management, recruitment, and salary determination.
+
 ### Key Findings from HR Interactions
 - **Data Overload:** HRs spend hours manually updating and cross-checking employee details.  
 - **Salary Inconsistency:** Lack of analytical models causes unfair or inaccurate salary decisions.  
