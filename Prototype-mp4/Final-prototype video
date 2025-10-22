@@ -1,21 +1,15 @@
 # Prototype Demo Video Description
 
-This demo video showcases the core features and workflow of our AI-powered recruitment platform prototype:
+This walkthrough video demonstrates the essential features of our recruitment platform prototype:
+- Login process
+- Resume upload functionality
+- Smart hiring module
+- Automatic profile matching
+- Task assignment workflow
+- Salary analysis dashboard
+- Recruitment analytics
 
-- **Login Module:** Secure user authentication and access control.  
-- **Resume Upload:** Candidates can upload resumes effortlessly.  
-- **Hire Smart:** Automated candidate shortlisting and AI-assisted matching.  
-- **Auto-Match Profiles:** Intelligent profile-job alignment with scoring.  
-- **Task Assignment:** Streamlined task delegation within recruitment teams.  
-- **Salary Analysis:** Comparative salary benchmarking and offer recommendations.  
-- **Analytics Dashboard:** Comprehensive visual insights into hiring funnel and candidate metrics.
+**Watch the demo video:**  
+[Demo Video (Google Drive)](https://drive.google.com/file/d/1DqDZQTZDQCl4bE_scjQJiAoTuP2CaPcp/view?usp=sharing)
 
-The video walks through the end-to-end user experience from login to final hiring decision support, demonstrating both user interface and backend AI capabilities.
-
-Watch the video file `03-prototype/video-demo.mp4` for a complete prototype walkthrough.
-
----
-
-Including this descriptive file alongside the video gives judges and reviewers context to quickly understand and appreciate the demo’s features during your hackathon submission. Upload both files using GitHub’s web interface or CLI commands.
-
-This ensures your submission is comprehensive, clear, and professionally presented.
+The video provides a detailed look at the entire recruitment pipeline and showcases the working prototype as presented for the hackathon round.
